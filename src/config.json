@@ -1,0 +1,21 @@
+{
+    "filetransfer": {
+        "broker": {
+            "host": "127.0.0.1",
+            "port": 5555
+        },
+        "broker2": {
+            "host": "141.85.224.172",
+            "port": 12345
+        },
+        "self": {
+            "name": "Alin",
+            "location": "Rectorat"
+        },
+        "self2": {
+            "name": "Bob",
+            "location": "Precis"
+        },
+        "segment_size": 5
+    }
+}
