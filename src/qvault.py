@@ -31,6 +31,10 @@ import qkdgkt
 import zmq
 import json
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 with open('config.json') as f:
     config = json.load(f)["filetransfer"]
 
@@ -71,7 +75,7 @@ class QKDTransferApp(QWidget):
         self.name_field = QLineEdit(config['self']['name'])
 
         # dropdown select location of client
-        self.location_label = QLabel(f"Location: {config['self']['location']}")
+        self.location_label = QLabel(f"Location: {os.environ.get("LOCATION", "ADD_LOCATION")}")
         # self.location_dropdown = QComboBox()
         # self.location_dropdown.addItems(self.locations)
         # # find the index of myname
@@ -121,7 +125,7 @@ class QKDTransferApp(QWidget):
         ip = self.ip_field.text()
         port = int(self.port_field.text())
         # self.location = self.location_dropdown.currentText()
-        self.location = config['self']['location']
+        self.location = os.environ.get("LOCATION", "ADD_LOCATION")
 
         # Here you would add the actual connection logic using ip and port
         print(f"Connecting to {ip}:{port}...")
