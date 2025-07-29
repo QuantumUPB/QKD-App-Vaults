@@ -8,14 +8,46 @@
 
 ### Description
 
-This application implements a vault of QKD-generated keys that can be accumulated while connected to RoNaQCI for exploiting away from RoNaQCI.
+This application aggregates QKD generated keys into a vault for later use.  It connects to a broker that coordinates multiple clients and exchanges keys via the [QKDGKT](https://github.com/QuantumUPB/QKD-Infra-GetKey) tooling.
 
-This application has been developed by the Quantum Team @ UPB, and is provided to everyone for fair usage according to the License.
-  
 ### Requirements
 
-- A point-to-point connection to a QKD device that can be used by the [QKDGKT](https://github.com/QuantumUPB/QKD-Infra-GetKey) module.
-- `python3` installed.
+- Python 3
+- Access to a QKD device usable by [QKDGKT](https://github.com/QuantumUPB/QKD-Infra-GetKey)
+
+### Installation
+
+1. Clone this repository and the QKDGKT helper next to it:
+   ```bash
+   git clone https://github.com/QuantumUPB/QKD-App-Vaults.git
+   git clone https://github.com/QuantumUPB/QKD-Infra-GetKey.git QKD-App-Vaults/src/QKD-Infra-GetKey
+   ```
+2. Install the Python dependencies:
+   ```bash
+   cd QKD-App-Vaults
+   pip install -r requirements.txt
+   pip install -r src/QKD-Infra-GetKey/requirements.txt
+   ```
+3. Copy the environment template and adjust the variables for your setup:
+   ```bash
+   cp src/template.env .env
+   # edit .env to set LOCATION, CONSUMER and optional ADD_KME
+   ```
+4. Review and update `src/config.json` with the broker information and your client details.
+
+### Usage
+
+1. **Start the broker** (once per network):
+   ```bash
+   python src/broker.py
+   ```
+   Leave this process running.
+2. **Run the GUI client** in a different terminal:
+   ```bash
+   python src/qvault.py
+   ```
+3. In the GUI, fill in the broker IP/port and your name, then connect.
+4. Use *Refresh Client List* to see other participants and click *Run* to generate a vault with a selected client.  Generated keys are saved to CSV files named `<peer>_YYYYMMDD-HHMMSS.csv` in the current directory.
 
 ### Copyright and license
 
