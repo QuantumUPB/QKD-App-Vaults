@@ -28,14 +28,13 @@ This application aggregates QKD generated keys into a vault for later use.  It c
    pip install -r requirements.txt
    pip install -r src/QKD-Infra-GetKey/requirements.txt
    ```
-3. Copy the environment template and adjust the variables for your setup:
-   ```bash
-   cp src/template.env .env
-   # edit .env to set LOCATION, CONSUMER and optional ADD_KME
-   ```
-4. Review and update `src/config.json` with the broker information and your client details.
+3. Copy `src/config_sample.toml` to `src/config.toml` and update it with the
+   broker information and desired segment size.  The application will use
+   `config.toml` if present and fall back to the sample file otherwise.
 
 ### Usage
+
+#### GUI client
 
 1. **Start the broker** (once per network):
    ```bash
@@ -48,6 +47,15 @@ This application aggregates QKD generated keys into a vault for later use.  It c
    ```
 3. In the GUI, fill in the broker IP/port and your name, then connect.
 4. Use *Refresh Client List* to see other participants and click *Run* to generate a vault with a selected client.  Generated keys are saved to CSV files named `<peer>_YYYYMMDD-HHMMSS.csv` in the current directory.
+
+#### CLI client
+
+```bash
+python src/qvault_cli.py list-clients --name <your-name>
+python src/qvault_cli.py run <peer> --name <your-name>
+```
+
+The CLI uses the same underlying functionality as the GUI but provides a terminal-based interface.
 
 ### Copyright and license
 

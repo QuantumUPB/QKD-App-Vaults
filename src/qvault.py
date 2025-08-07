@@ -15,7 +15,6 @@ from PyQt5.QtCore import QTimer, QTime
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QComboBox
 from PyQt5.QtWidgets import QSizePolicy
 
 from receive import FileReceiverWorker
@@ -29,20 +28,25 @@ sys.path.append(qkdgkt_path)
 import qkdgkt
 
 import zmq
-import json
 
-from dotenv import load_dotenv
+try:
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover - Python <3.11
+    import tomli as tomllib
 
-load_dotenv()
-
-with open('config.json') as f:
-    config = json.load(f)["filetransfer"]
+# Load configuration from ``config.toml`` if present, falling back to the
+# repository-provided sample.  This mirrors the behaviour of the CLI and makes
+# it possible to override settings such as the broker host.
+_config_path = os.path.join(os.path.dirname(__file__), 'config.toml')
+if not os.path.exists(_config_path):
+    _config_path = os.path.join(os.path.dirname(__file__), 'config_sample.toml')
+with open(_config_path, 'rb') as f:
+    config = tomllib.load(f)
 
 class QKDTransferApp(QWidget):
     def __init__(self):
         self.task_type = None
-        self.config = qkdgkt.qkd_get_config()
-        self.locations = qkdgkt.qkd_get_location_names()
+        self.locations = qkdgkt.get_destinations()
         self.client_list = []
         super().__init__()
         self.initUI()
@@ -72,10 +76,10 @@ class QKDTransferApp(QWidget):
 
         # name label and field
         self.name_label = QLabel('Name:')
-        self.name_field = QLineEdit(config['self']['name'])
+        self.name_field = QLineEdit()
 
-        # dropdown select location of client
-        self.location_label = QLabel(f"Location: {os.environ.get("LOCATION", "ADD_LOCATION")}")
+        # display auto-detected location
+        self.location_label = QLabel(f"Location: {qkdgkt.qkd_get_myself()}")
         # self.location_dropdown = QComboBox()
         # self.location_dropdown.addItems(self.locations)
         # # find the index of myname
@@ -125,7 +129,7 @@ class QKDTransferApp(QWidget):
         ip = self.ip_field.text()
         port = int(self.port_field.text())
         # self.location = self.location_dropdown.currentText()
-        self.location = os.environ.get("LOCATION", "ADD_LOCATION")
+        self.location = qkdgkt.qkd_get_myself()
 
         # Here you would add the actual connection logic using ip and port
         print(f"Connecting to {ip}:{port}...")

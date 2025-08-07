@@ -1,5 +1,6 @@
 pyzmq
 numpy
 PyQt5
-python-dotenv
 requests
+click
+tomli
